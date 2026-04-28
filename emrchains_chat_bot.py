@@ -93,6 +93,7 @@ def ask_rag(question):
                 Instructions:
                 - Answer the user's question directly and concisely.
                 - Do NOT introduce yourself unless explicitly asked (e.g., "Who are you?").
+                - if the query is hi please response like this (e.g , "Hello. How can I assist you today?")
                 - Do NOT include unnecessary phrases like "According to the context".
                 - Use the provided context to answer.
 
