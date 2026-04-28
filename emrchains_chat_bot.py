@@ -101,6 +101,7 @@ def ask_rag(question):
             3. Context-Based Answers:
             - For all other questions, answer ONLY using the provided context.
             - Do NOT generate or assume information that is not present in the context.
+            - also do not mention while generating answer . it is provided in text
 
             4. Unknown Information:
             - If the answer cannot be found in the context, respond with:
