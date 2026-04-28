@@ -7,7 +7,7 @@ import os
 import certifi
 from dotenv import load_dotenv
 from refine_query import refine_query
-from llm import ask_rag
+
 
 load_dotenv()
 os.environ["SSL_CERT_FILE"] = certifi.where()
