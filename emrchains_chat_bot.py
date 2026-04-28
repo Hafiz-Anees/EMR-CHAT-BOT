@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import certifi
 from dotenv import load_dotenv
-
+from refine_query import refine_query
 # -----------------------------
 # ENV + SSL FIX
 # -----------------------------
@@ -74,8 +74,12 @@ client = Groq(api_key=groq_api_key)
 # -----------------------------
 # RAG FUNCTION
 # -----------------------------
+
+
+
 def ask_rag(question):
-    docs = retriever.invoke(question)
+    updated_question = refine_query(question)
+    docs = retriever.invoke(updated_question)
     context = "\n\n".join([doc.page_content for doc in docs])
 
     response = client.chat.completions.create(
@@ -84,7 +88,7 @@ def ask_rag(question):
             {
             "role": "system",
             "content": """
-            You are an AI assistant representing EMR Chain.
+            You are an AI assistant re presenting EMR Chain.
 
             Your purpose is to provide accurate, professional, and helpful information about the company give to the point answer not mentiona as an ai assisstant i am providing this and that.
 
