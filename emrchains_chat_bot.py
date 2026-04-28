@@ -1,11 +1,14 @@
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
 import streamlit as st
 import os
 import certifi
 from dotenv import load_dotenv
 from refine_query import refine_query
-# -----------------------------
-# ENV + SSL FIX
-# -----------------------------
+from llm import ask_rag
+
 load_dotenv()
 os.environ["SSL_CERT_FILE"] = certifi.where()
 
@@ -15,20 +18,12 @@ if not groq_api_key:
     st.error("❌ Please set GROQ_API_KEY in .env file")
     st.stop()
 
-# -----------------------------
-# PAGE CONFIG
-# -----------------------------
+# streamlit code
+
 st.set_page_config(page_title="PDF RAG Chatbot", layout="centered")
 st.title("📄 EMR CHAT BOT")
 st.write("Ask about emr chain")
 
-# -----------------------------
-# LOAD & CACHE VECTOR STORE
-# -----------------------------
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
 
 
 @st.cache_resource
@@ -63,74 +58,6 @@ retriever = vector_store.as_retriever(
     # search_type="mmr",
     search_kwargs={"k": 3}
 )
-
-# -----------------------------
-# GROQ SETUP
-# -----------------------------
-from groq import Groq
-
-client = Groq(api_key=groq_api_key)
-
-# -----------------------------
-# RAG FUNCTION
-# -----------------------------
-
-
-
-def ask_rag(question):
-    updated_question = refine_query(question)
-    docs = retriever.invoke(updated_question)
-    context = "\n\n".join([doc.page_content for doc in docs])
-
-    response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
-        messages=[
-            {
-                "role": "system",
-                "content": """
-                You are an AI assistant for EMR Chain.
-
-                Instructions:
-                - Answer the user's question directly and concisely.
-                - Do NOT introduce yourself unless explicitly asked (e.g., "Who are you?").
-                - if the query is hi please response like this (e.g , "Hello. How can I assist you today?")
-                - Do NOT include unnecessary phrases like "According to the context".
-                - Use the provided context to answer.
-
-                Strict Instructions:
-                - DO NOT say phrases like:
-                "Based on the provided information"
-                "According to the context"
-                "From the given data"
-                - DO NOT explain how you got the answer.
-
-                Rules:
-                - If the question is about identity, respond:
-                "I am an AI assistant for EMR Chain, here to help answer questions about the company."
-                - For all other questions:
-                - Answer ONLY using the provided context
-                - If the answer is not found, say: "I don't know based on the provided information"
-
-                Style:
-                - Be clear, direct, and professional
-                - Keep answers short unless more detail is required
-            """
-            },
-            {
-                "role": "user",
-                "content": f"""
-                Context:
-                {context}
-
-                Question:
-                {question}
-                    """
-            }
-        ]
-    )
-
-    return response.choices[0].message.content
-
 
 
 # -----------------------------
