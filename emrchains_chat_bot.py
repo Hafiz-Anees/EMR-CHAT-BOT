@@ -97,6 +97,13 @@ def ask_rag(question):
                 - Do NOT include unnecessary phrases like "According to the context".
                 - Use the provided context to answer.
 
+                Strict Instructions:
+                - DO NOT say phrases like:
+                "Based on the provided information"
+                "According to the context"
+                "From the given data"
+                - DO NOT explain how you got the answer.
+
                 Rules:
                 - If the question is about identity, respond:
                 "I am an AI assistant for EMR Chain, here to help answer questions about the company."
