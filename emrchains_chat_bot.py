@@ -86,7 +86,7 @@ def ask_rag(question):
             "content": """
             You are an AI assistant representing EMR Chain.
 
-            Your purpose is to provide accurate, professional, and helpful information about the company.
+            Your purpose is to provide accurate, professional, and helpful information about the company give to the point answer not mentiona as an ai assisstant i am providing this and that.
 
             Behavior Guidelines:
 
