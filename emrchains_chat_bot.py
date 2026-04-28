@@ -65,6 +65,15 @@ client = Groq(api_key=groq_api_key)
 
 def ask_rag(question):
     updated_question = refine_query(question)
+
+    # managing previous chat
+    history = ""
+    for msg in st.session_state.messages[-5:]:  # last 5 messages
+        role = msg["role"]
+        content = msg["content"]
+        history += f"{role}: {content}\n"
+
+
     docs = retriever.invoke(updated_question)
     context = "\n\n".join([doc.page_content for doc in docs])
 
