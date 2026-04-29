@@ -7,12 +7,14 @@ import os
 import certifi
 from dotenv import load_dotenv
 from refine_query import refine_query
+from groq import Groq
 
 
+
+groq_api_key = os.getenv("GROQ_API_KEY")
 load_dotenv()
 os.environ["SSL_CERT_FILE"] = certifi.where()
 
-groq_api_key = os.getenv("GROQ_API_KEY")
 
 if not groq_api_key:
     st.error("❌ Please set GROQ_API_KEY in .env file")
@@ -59,10 +61,8 @@ retriever = vector_store.as_retriever(
     search_kwargs={"k": 3}
 )
 
-from groq import Groq
-groq_api_key = os.getenv("GROQ_API_KEY")
-client = Groq(api_key=groq_api_key)
 
+client = Groq(api_key=groq_api_key)
 
 def ask_rag(question):
     
