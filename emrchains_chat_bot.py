@@ -1,19 +1,25 @@
+import os
+import certifi
+from dotenv import load_dotenv
+
+# ✅ STEP 1: Load env FIRST
+load_dotenv()
+
+# ✅ STEP 2: Set SSL BEFORE any API client is created
+os.environ["SSL_CERT_FILE"] = certifi.where()
+
+# ✅ Now safe to import everything
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 import streamlit as st
-import os
-import certifi
-from dotenv import load_dotenv
 from refine_query import refine_query
 from groq import Groq
 
 
-
+# ✅ Get API key
 groq_api_key = os.getenv("GROQ_API_KEY")
-load_dotenv()
-os.environ["SSL_CERT_FILE"] = certifi.where()
 
 
 if not groq_api_key:
@@ -66,7 +72,7 @@ client = Groq(api_key=groq_api_key)
 
 def ask_rag(question):
     
-    updated_question = refine_query(question)
+    updated_question = refine_query(question,client)
 
 
     docs = retriever.invoke(updated_question)
